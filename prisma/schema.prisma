@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+  nome               String
+  email              String       @unique
+  telefone           String
+  cpf                String       @unique
+  endereco           String
+  numero             String
+  cidade             String
+  dataDeNascimento   String
+  senha              String
+  acesso             Boolean
+  cargo              String
+  produtos           Produto[]    @relation("UsuarioProdutos") 
+  itensPedido        ItemPedido[] @relation("UsuarioPedidos") 
+}
+
+model Produto {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  nome         String
+  descricao    String
+  preco        String
+  imagemUrl    String
+  estoque      Estoque?   @relation(fields: [estoqueId], references: [id])
+  estoqueId    String?    @db.ObjectId
+  cadastradoPor Usuario?  @relation("UsuarioProdutos", fields: [usuarioId], references: [id])
+  usuarioId    String?    @db.ObjectId
+}
+
+model ItemPedido {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  quantidade_total Int
+  valorTotal       Float
+  concluido        Boolean
+  usuario          Usuario?  @relation("UsuarioPedidos", fields: [usuarioId], references: [id])
+  usuarioId        String?   @db.ObjectId
+  estoque          Estoque?  @relation(fields: [estoqueId], references: [id])
+  estoqueId        String?   @db.ObjectId
+}
+
+model Estoque {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  dataDeEntrada String
+  quantidade    String
+  produtos      Produto[]
+  itensPedido   ItemPedido[]
+}
