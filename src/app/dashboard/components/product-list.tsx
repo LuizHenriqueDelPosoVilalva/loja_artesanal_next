@@ -41,6 +41,7 @@ const ProductList = ({ currentUserId }: Props) => {
           key={product.id}
           product={product}
           canEdit={product.userId === currentUserId}
+          userId={currentUserId}
         />
       ))}
     </div>
