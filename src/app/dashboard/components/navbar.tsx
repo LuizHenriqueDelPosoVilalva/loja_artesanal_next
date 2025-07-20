@@ -43,7 +43,7 @@ export default function Navbar ({name, email, id}: NavbarProps ) {
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/profile">Perfil</Link>
+              <Link href={`/profile?userId=${id}`}>Perfil</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/car">Carrinho</Link>
