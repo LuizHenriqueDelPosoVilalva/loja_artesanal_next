@@ -7,50 +7,94 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
-  nome               String
-  email              String       @unique
-  telefone           String
-  cpf                String       @unique
-  endereco           String
-  numero             String
-  cidade             String
-  dataDeNascimento   String
-  senha              String
-  acesso             Boolean
-  cargo              String
-  produtos           Produto[]    @relation("UsuarioProdutos") 
-  itensPedido        ItemPedido[] @relation("UsuarioPedidos") 
-}
-
 model Produto {
-  id           String     @id @default(auto()) @map("_id") @db.ObjectId
-  nome         String
-  descricao    String
-  preco        String
-  imagemUrl    String
-  estoque      Estoque?   @relation(fields: [estoqueId], references: [id])
-  estoqueId    String?    @db.ObjectId
-  cadastradoPor Usuario?  @relation("UsuarioProdutos", fields: [usuarioId], references: [id])
-  usuarioId    String?    @db.ObjectId
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  nome            String
+  descricao       String
+  preco           String
+  imagemUrl       String
+  estoque         Estoque?    @relation(fields: [estoqueId], references: [id])
+  estoqueId       String?     @db.ObjectId
+  cadastradoPor   User?       @relation("UserProdutos", fields: [userId], references: [id])
+  userId          String?
 }
 
 model ItemPedido {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
   quantidade_total Int
   valorTotal       Float
   concluido        Boolean
-  usuario          Usuario?  @relation("UsuarioPedidos", fields: [usuarioId], references: [id])
-  usuarioId        String?   @db.ObjectId
-  estoque          Estoque?  @relation(fields: [estoqueId], references: [id])
-  estoqueId        String?   @db.ObjectId
+  usuario          User?       @relation("UserPedidos", fields: [userId], references: [id])
+  userId           String?
+  estoque          Estoque?    @relation(fields: [estoqueId], references: [id])
+  estoqueId        String?     @db.ObjectId
 }
 
 model Estoque {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  dataDeEntrada String
-  quantidade    String
-  produtos      Produto[]
-  itensPedido   ItemPedido[]
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  dataDeEntrada  String
+  quantidade     String
+  produtos       Produto[]
+  itensPedido    ItemPedido[]
+}
+
+model User {
+  id               String       @id @map("_id")
+  name             String
+  email            String       @unique
+  emailVerified    Boolean
+  image            String?
+  createdAt        DateTime
+  updatedAt        DateTime
+  sessions         Session[]
+  accounts         Account[]
+  produtos         Produto[]    @relation("UserProdutos")
+  itensPedido      ItemPedido[] @relation("UserPedidos")
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @map("_id")
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                     String    @id @map("_id")
+  accountId              String
+  providerId             String
+  userId                 String
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken            String?
+  refreshToken           String?
+  idToken                String?
+  accessTokenExpiresAt   DateTime?
+  refreshTokenExpiresAt  DateTime?
+  scope                  String?
+  password               String?
+  createdAt              DateTime
+  updatedAt              DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @map("_id")
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }
