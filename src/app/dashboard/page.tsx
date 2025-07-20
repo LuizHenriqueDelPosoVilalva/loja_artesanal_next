@@ -16,11 +16,11 @@ const DashboardPage = async () => {
     redirect('/authentication')
   }
 
-  const { name, email } = session.user
+  const { name, email, id } = session.user
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar name={name} email={email} />
+      <Navbar name={name} email={email} id={id}/>
 
       <main className="p-6">
         <h1 className="text-2xl font-bold mb-4">Bem-vindo, {name}!</h1>

@@ -15,9 +15,10 @@ import SignOutButton from "./sign-out-button";
 type NavbarProps = {
   name: string;
   email: string;
+  id: string;
 };
 
-export default function Navbar ({name, email}: NavbarProps ) {
+export default function Navbar ({name, email, id}: NavbarProps ) {
   return (
     <nav className="flex items-center justify-between border-b bg-white px-6 py-4 shadow-sm">
       <div>
@@ -26,7 +27,7 @@ export default function Navbar ({name, email}: NavbarProps ) {
 
       <div className="flex items-center gap-4">
         <Button asChild>
-          <Link href="/produtos/novo">Cadastrar Produto</Link>
+          <Link href={`/newProduct?userId=${id}`}>Cadastrar Produto</Link>
         </Button>
 
         <DropdownMenu>
